@@ -13,7 +13,7 @@ TagManager:
   - UI
   - 
   - 
-  - 
+  - CollisionLayer
   - 
   - 
   - 
@@ -40,4 +40,13 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: floor
+    uniqueID: 1393741953
+    locked: 0
+  - name: doorway
+    uniqueID: 615405039
+    locked: 0
+  - name: entities
+    uniqueID: 2512966301
     locked: 0
