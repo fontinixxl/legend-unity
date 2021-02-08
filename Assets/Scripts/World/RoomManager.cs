@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine.U2D;
-using Random = UnityEngine.Random;      //Tells Random to use the Unity Engine random number generator.
+using Random = UnityEngine.Random;
 
 public class RoomManager : MonoBehaviour
 {
@@ -19,7 +19,10 @@ public class RoomManager : MonoBehaviour
 		}
 	}
 
-	private int horizontalTiles;
+    private int virtualWith;
+    private int virtualHight;
+
+    private int horizontalTiles;
 	private int verticalTiles;
 
 	//Arrays of tile prefabs.
@@ -33,32 +36,48 @@ public class RoomManager : MonoBehaviour
 	public GameObject bottomLeftCornerTile;
 	public GameObject bottomRightCornerTile;
 
-	//A variable to store a reference to the transform of our Board object.
-	private Transform boardHolder;
+	// PlayerPrefab
+	public GameObject player;
+
+	// DoorWays
+	public GameObject doorWayLeft;
+	public GameObject doorWayRight;
+	public GameObject doorWayTop;
+	public GameObject doorWayBottom;
+	private readonly string[] doorWayDirections = new string[] { "Left", "Right", "Top", "Bottom" };
+
+	//A variable to store a reference to the transform of our Room object.
+	private Transform roomHolder;
+
 	//A list of possible locations to place tiles.
 	private List<Vector3> gridPositions = new List<Vector3>();
+
 
     private void Awake()
     {
 		PixelPerfectCamera pixPerfCam = Camera.main.GetComponent<PixelPerfectCamera>();
+		virtualWith = pixPerfCam.refResolutionX;
+		virtualHight = pixPerfCam.refResolutionY;
+		horizontalTiles = (virtualWith / pixPerfCam.assetsPPU) - 2;
+		verticalTiles = (virtualHight / pixPerfCam.assetsPPU) - 2;
+        //Debug.LogFormat("horizontalTiles {0} verticalTiles {1}", horizontalTiles, verticalTiles);
 
-		float virtualWith = pixPerfCam.refResolutionX;
-		float virtualHight = pixPerfCam.refResolutionY;
-		horizontalTiles = (int)(virtualWith / pixPerfCam.assetsPPU) - 2;
-		verticalTiles = (int)(virtualHight / pixPerfCam.assetsPPU) - 2;
-		//Debug.LogFormat("columns {0} Rows {1}", horizontalTiles, verticalTiles);
+	}
 
-		GenerateWallsAndFloors();
+    private void Start()
+    {
+        GenerateWallsAndFloors();
+		GenerateDoorWays();
+		Instantiate(player, player.transform.position, Quaternion.identity);
     }
-
-/*
- * Generates the walls and floors of the room, randomizing the various varieties
- * of said tiles for visual variety.
- */
-void GenerateWallsAndFloors()
+    /*
+	 * Generates the walls and floors of the room, randomizing the various varieties
+	 * of said tiles for visual variety.
+	 */
+    void GenerateWallsAndFloors()
     {
 		//Instantiate Board and set boardHolder to its transform.
-		boardHolder = new GameObject("Room").transform;
+		roomHolder = new GameObject("Room").transform;
 
         for (int y = 1; y <= verticalTiles; y++)
         {
@@ -106,20 +125,53 @@ void GenerateWallsAndFloors()
 					toInstantiate = floorTiles[Random.Range(0, floorTiles.Length)];
                 }
 
-				// TODO: Consider adjusting camera position (ONCE and forall!) instead of each tile
-
-				// Adjust the offset for each tile's position so the result board is camera centered.
-				// First substracting 1 to each component x,y to be 0 based;
-				// Ex: first bottomLeftCorner tile position was (1,1) and we want it to be (0,0) and so on.
-				// Finally we substract half of the total tiles.
-				float offsetX = (float)x - 1 - ((float)horizontalTiles / 2);
-                float offsetY = (float)y - 1 - ((float)verticalTiles / 2);
-				
-                GameObject instance = Instantiate(toInstantiate, new Vector3(offsetX, offsetY, 0f), Quaternion.identity);
-
-				//Set the parent of our newly instantiated object instance to boardHolder, this is just organizational to avoid cluttering hierarchy.
-				instance.transform.SetParent(boardHolder);
+                GameObject instance = Instantiate(toInstantiate, new Vector3(x, y, 0f), Quaternion.identity);
+				instance.transform.SetParent(roomHolder);
 			}
 		}
 	}
+
+	// TODO: Extract to DoorWay Class
+	void GenerateDoorWays()
+    {
+		float x, y;
+		GameObject instance;
+		GameObject doorWay;
+
+		Transform doorWayHolder = new GameObject("DoorWay").transform;
+		doorWayHolder.SetParent(roomHolder);
+
+		foreach (var direction in doorWayDirections)
+        {
+			switch (direction)
+			{
+				case "Left":
+					x = 0;
+					y = verticalTiles * 0.5f;
+					doorWay = doorWayLeft;
+					break;
+				case "Right":
+					x = horizontalTiles;
+					y = verticalTiles * 0.5f;
+					doorWay = doorWayRight;
+					break;
+				case "Top":
+					x = horizontalTiles * 0.5f;
+					y = verticalTiles;
+					doorWay = doorWayTop;
+					break;
+				case "Bottom":
+					x = horizontalTiles * 0.5f;
+					y = 0;
+					doorWay = doorWayBottom;
+					break;
+				default:
+					Debug.LogErrorFormat("DoorWay ''{0}'' Prefab doesn't exist!", direction);
+					return;
+			}
+
+			instance = Instantiate(doorWay, new Vector3(x, y, 0f), Quaternion.identity);
+			instance.transform.SetParent(doorWayHolder);
+		}
+    }
 }
