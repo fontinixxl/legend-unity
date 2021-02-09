@@ -19,13 +19,12 @@ public class RoomManager : MonoBehaviour
         }
     }
 
-    private int virtualWith;
-    private int virtualHight;
-
-    [HideInInspector]
-    public int HorizontalTiles { get; private set; }
-    [HideInInspector]
-    public int VerticalTiles { get; private set; }
+    public static int Map_render_offset_x { get; private set; }
+    public static int Map_render_offset_y { get; private set; }
+    public static int RoomWidth { get; private set; }
+    public static int RoomHeight { get; private set; }
+    public static int ScreenWidth { get; private set; }
+    public static int ScreenHight { get; private set; }
 
     //Arrays of tile prefabs.
     public GameObject[] floorTiles;
@@ -51,16 +50,22 @@ public class RoomManager : MonoBehaviour
     //A list of possible locations to place tiles.
     private List<Vector3> gridPositions = new List<Vector3>();
 
+
     private void Awake()
     {
         PixelPerfectCamera pixPerfCam = Camera.main.GetComponent<PixelPerfectCamera>();
-        virtualWith = pixPerfCam.refResolutionX;
-        virtualHight = pixPerfCam.refResolutionY;
-        HorizontalTiles = (virtualWith / pixPerfCam.assetsPPU) - 2;
-        VerticalTiles = (virtualHight / pixPerfCam.assetsPPU) - 2;
+        int pixelsPerUnit = pixPerfCam.assetsPPU;
+        ScreenWidth = (pixPerfCam.refResolutionX / pixelsPerUnit);
+        ScreenHight = pixPerfCam.refResolutionY / pixelsPerUnit;
+
+        // Room will be rendered one unit off the edges
+        RoomWidth = ScreenWidth - 2;
+        RoomHeight = ScreenHight - 2;
+
+        Map_render_offset_x = (ScreenWidth - RoomWidth) / 2;
+        Map_render_offset_y = (ScreenHight - RoomHeight) / 2;
 
         _doorways = new List<Doorway>();
-        //Debug.LogFormat("horizontalTiles {0} verticalTiles {1}", horizontalTiles, verticalTiles);
     }
 
     private void Start()
@@ -79,43 +84,43 @@ public class RoomManager : MonoBehaviour
         //Instantiate Board and set boardHolder to its transform.
         roomHolder = new GameObject("Room").transform;
 
-        for (int y = 1; y <= VerticalTiles; y++)
+        for (int y = 0; y < RoomHeight; y++)
         {
-            for (int x = 1; x <= HorizontalTiles; x++)
+            for (int x = 0; x < RoomWidth; x++)
             {
                 GameObject toInstantiate;
 
                 // Corner tiles
-                if (x == 1 && y == 1)
+                if (x == 0 && y == 0)
                 {
                     toInstantiate = bottomLeftCornerTile;
                 }
-                else if (x == 1 && y == VerticalTiles)
+                else if (x == 0 && y == RoomHeight - 1)
                 {
                     toInstantiate = topLeftCornerTile;
                 }
-                else if (x == HorizontalTiles && y == 1)
+                else if (x == RoomWidth -1 && y == 0)
                 {
                     toInstantiate = bottomRightCornerTile;
                 }
-                else if (x == HorizontalTiles && y == VerticalTiles)
+                else if (x == RoomWidth - 1 && y == RoomHeight - 1)
                 {
                     toInstantiate = topRightCornerTile;
                 }
                 //random left - hand walls, right walls, top, bottom
-                else if (x == 1)
+                else if (x == 0)
                 {
                     toInstantiate = leftWallsTiles[Random.Range(0, leftWallsTiles.Length)];
                 }
-                else if (x == HorizontalTiles)
+                else if (x == RoomWidth -1)
                 {
                     toInstantiate = rightWallsTiles[Random.Range(0, rightWallsTiles.Length)];
                 }
-                else if (y == 1)
+                else if (y == 0)
                 {
                     toInstantiate = bottomWallsTiles[Random.Range(0, topWallsTiles.Length)];
                 }
-                else if (y == VerticalTiles)
+                else if (y == RoomHeight -1)
                 {
                     toInstantiate = topWallsTiles[Random.Range(0, bottomWallsTiles.Length)];
                 }
@@ -125,7 +130,8 @@ public class RoomManager : MonoBehaviour
                     toInstantiate = floorTiles[Random.Range(0, floorTiles.Length)];
                 }
 
-                GameObject instance = Instantiate(toInstantiate, new Vector3(x, y, 0f), Quaternion.identity);
+                Vector3 offsetPos = new Vector3(x + Map_render_offset_x, y + Map_render_offset_y, 0f);
+                GameObject instance = Instantiate(toInstantiate, offsetPos, Quaternion.identity);
                 instance.transform.SetParent(roomHolder);
             }
         }
