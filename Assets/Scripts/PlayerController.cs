@@ -44,4 +44,9 @@ public class PlayerController : MonoBehaviour
         _currentState = state;
         _currentState.EnterState(this);
     }
+
+    public void EnableKinematic(bool enable)
+    {
+        _rigidbody2d.isKinematic = enable;
+    }
 }

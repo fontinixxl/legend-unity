@@ -15,6 +15,12 @@ public class PlayerWalkState : PlayerBaseState
 
     public override void Update()
     {
+        // While shifting to the next room return to IdleState
+        if (DungeonManager.Instance.Shifting)
+        {
+            player.TransitionToState(player.IdleState);
+        }
+
         float horizontalMovement = Input.GetAxisRaw("Horizontal");
         float verticalMovement = Input.GetAxisRaw("Vertical");
 

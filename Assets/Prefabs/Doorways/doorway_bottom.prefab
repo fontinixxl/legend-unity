@@ -100,7 +100,7 @@ MonoBehaviour:
     type: 3}
   spriteDoorClosed: {fileID: 5229344843559995471, guid: 0688132fe7e7d124987dc6f41f17795a,
     type: 3}
-  direction: 2
+  _direction: 2
 --- !u!61 &8230400710255881152
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -114,7 +114,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 1.0011137, y: 1.585808}
+  m_Offset: {x: 0.9964025, y: 1.4371293}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -125,5 +125,5 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.6280231, y: 1.1714044}
+  m_Size: {x: 0.8805242, y: 0.8740468}
   m_EdgeRadius: 0

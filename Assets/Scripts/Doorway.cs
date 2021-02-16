@@ -1,75 +1,81 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
+
+public enum Direction
+{
+    TOP, RIGHT, BOTTOM, LEFT
+}
 
 public class Doorway : MonoBehaviour
 {
     public Sprite spriteDoorOpen;
     public Sprite spriteDoorClosed;
 
-    public enum Direction
-    {
-        Top, Right, Bottom, Left
-    }
-    public Direction direction;
-    private bool doorsOpen;
+    public Direction _direction;
+    private bool _open;
+    //public bool IsOpen { get { return _open; } }
 
     private SpriteRenderer spriteRenderer;
+
+    public static event Action<Direction, Transform> PlayerCollideDoorway;
 
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
-        doorsOpen = false;
+        _open = false;
+        spriteRenderer.sprite = !_open ? spriteDoorClosed : spriteDoorOpen;
     }
 
-    private void Start()
-    {
-        SetPosition();
-    }
-
-    private void SetPosition()
+    public void OffsetDoorways(float offsetX, float offsetY)
     {
         float x, y;
-        if (direction == Direction.Bottom)
+        if (_direction == Direction.BOTTOM)
         {
-            x = RoomManager.RoomWidth * 0.5f;
+            x = Const.MapWitdth * 0.5f;
             y = 0f;
         }
-        else if (direction == Direction.Left)
+        else if (_direction == Direction.LEFT)
         {
             x = 0;
-            y = RoomManager.RoomHeight * 0.5f;
+            y = Const.MapHeight * 0.5f;
         }
-        else if (direction == Direction.Top)
+        else if (_direction == Direction.TOP)
         {
-            x = RoomManager.RoomWidth * 0.5f;
-            y = RoomManager.RoomHeight;
+            x = Const.MapWitdth * 0.5f;
+            y = Const.MapHeight;
         }
         else
         {
             // Right
-            x = RoomManager.RoomWidth;
-            y = RoomManager.RoomHeight * 0.5f;
+            x = Const.MapWitdth;
+            y = Const.MapHeight * 0.5f;
         }
 
-        transform.position = new Vector3(x, y, 0f);
+        transform.position = new Vector3(x + offsetX, y + offsetY, 0f);
     }
 
     private void Update()
     {
-        // TODO: The logic must be moved to an event Listener
+        //TODO: Delete it; just for testing the open / close mechanism
         if (Input.GetKeyDown(KeyCode.O))
         {
-            doorsOpen = !doorsOpen;
-            spriteRenderer.sprite = !doorsOpen ? spriteDoorClosed : spriteDoorOpen;
+            _open = !_open;
+            spriteRenderer.sprite = !_open ? spriteDoorClosed : spriteDoorOpen;
         }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player") && doorsOpen)
+        if (!DungeonManager.Instance.Shifting && collision.CompareTag("Player") && _open)
         {
-            collision.transform.position = new Vector3( RoomManager.RoomWidth/2 +1, RoomManager.RoomHeight/2 +1, 0f);
+            // shift player to center of door to avoid phasing through wall
+            PlayerCollideDoorway?.Invoke(_direction, transform);
         }
+    }
+
+    public void Open(bool open)
+    {
+        _open = open;
+        spriteRenderer.sprite = !open ? spriteDoorClosed : spriteDoorOpen;
     }
 }

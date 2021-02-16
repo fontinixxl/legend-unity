@@ -19,14 +19,7 @@ public class RoomManager : MonoBehaviour
         }
     }
 
-    public static int Map_render_offset_x { get; private set; }
-    public static int Map_render_offset_y { get; private set; }
-    public static int RoomWidth { get; private set; }
-    public static int RoomHeight { get; private set; }
-    public static int ScreenWidth { get; private set; }
-    public static int ScreenHight { get; private set; }
-
-    //Arrays of tile prefabs.
+    // Arrays of tile prefabs
     public GameObject[] floorTiles;
     public GameObject[] topWallsTiles;
     public GameObject[] bottomWallsTiles;
@@ -37,56 +30,34 @@ public class RoomManager : MonoBehaviour
     public GameObject bottomLeftCornerTile;
     public GameObject bottomRightCornerTile;
 
-    // PlayerPrefab
-    public GameObject player;
-
-    // DoorWays
     public List<Doorway> DoorwayPrefabs;
-    private List<Doorway> _doorways;
 
-    //A variable to store a reference to the transform of our Room object.
-    private Transform roomHolder;
+    // A list of possible locations to place tiles.
+    //private List<Vector3> gridPositions = new List<Vector3>();
 
-    //A list of possible locations to place tiles.
-    private List<Vector3> gridPositions = new List<Vector3>();
+    private float _adjacentOffsetX;
+    private float _adjacentOffsetY;
 
+    private Room room;
 
-    private void Awake()
+    public Room GenerateRoom(float offsetX, float offsetY)
     {
-        PixelPerfectCamera pixPerfCam = Camera.main.GetComponent<PixelPerfectCamera>();
-        int pixelsPerUnit = pixPerfCam.assetsPPU;
-        ScreenWidth = (pixPerfCam.refResolutionX / pixelsPerUnit);
-        ScreenHight = pixPerfCam.refResolutionY / pixelsPerUnit;
+        _adjacentOffsetX = offsetX;
+        _adjacentOffsetY = offsetY;
 
-        // Room will be rendered one unit off the edges
-        RoomWidth = ScreenWidth - 2;
-        RoomHeight = ScreenHight - 2;
-
-        Map_render_offset_x = (ScreenWidth - RoomWidth) / 2;
-        Map_render_offset_y = (ScreenHight - RoomHeight) / 2;
-
-        _doorways = new List<Doorway>();
-    }
-
-    private void Start()
-    {
+        room = new Room();
         GenerateWallsAndFloors();
         GenerateDoorways();
-        Instantiate(player, player.transform.position, Quaternion.identity);
+
+        return room;
     }
 
-    /*
-	 * Generate the walls and floor of the room, randomizing the various varieties
-	 * of said tiles for visual variety.
-	 */
+	// Generate the walls and floor of the room, randomizing the various varieties
     void GenerateWallsAndFloors()
     {
-        //Instantiate Board and set boardHolder to its transform.
-        roomHolder = new GameObject("Room").transform;
-
-        for (int y = 0; y < RoomHeight; y++)
+        for (int y = 0; y < Const.MapHeight; y++)
         {
-            for (int x = 0; x < RoomWidth; x++)
+            for (int x = 0; x < Const.MapWitdth; x++)
             {
                 GameObject toInstantiate;
 
@@ -95,32 +66,34 @@ public class RoomManager : MonoBehaviour
                 {
                     toInstantiate = bottomLeftCornerTile;
                 }
-                else if (x == 0 && y == RoomHeight - 1)
+                else if (x == 0 && y == Const.MapHeight - 1)
                 {
                     toInstantiate = topLeftCornerTile;
                 }
-                else if (x == RoomWidth -1 && y == 0)
+                else if (x == Const.MapWitdth - 1 && y == 0)
                 {
                     toInstantiate = bottomRightCornerTile;
                 }
-                else if (x == RoomWidth - 1 && y == RoomHeight - 1)
+                else if (x == Const.MapWitdth - 1 && y == Const.MapHeight - 1)
                 {
                     toInstantiate = topRightCornerTile;
                 }
                 //random left - hand walls, right walls, top, bottom
                 else if (x == 0)
                 {
+
                     toInstantiate = leftWallsTiles[Random.Range(0, leftWallsTiles.Length)];
                 }
-                else if (x == RoomWidth -1)
+                else if (x == Const.MapWitdth - 1)
                 {
+
                     toInstantiate = rightWallsTiles[Random.Range(0, rightWallsTiles.Length)];
                 }
                 else if (y == 0)
                 {
                     toInstantiate = bottomWallsTiles[Random.Range(0, topWallsTiles.Length)];
                 }
-                else if (y == RoomHeight -1)
+                else if (y == Const.MapHeight - 1)
                 {
                     toInstantiate = topWallsTiles[Random.Range(0, bottomWallsTiles.Length)];
                 }
@@ -130,23 +103,51 @@ public class RoomManager : MonoBehaviour
                     toInstantiate = floorTiles[Random.Range(0, floorTiles.Length)];
                 }
 
-                Vector3 offsetPos = new Vector3(x + Map_render_offset_x, y + Map_render_offset_y, 0f);
-                GameObject instance = Instantiate(toInstantiate, offsetPos, Quaternion.identity);
-                instance.transform.SetParent(roomHolder);
+                Vector3 position = new Vector3(x + Const.MapRenderOffsetX + _adjacentOffsetX, 
+                    y + Const.MapRenderOffsetY + _adjacentOffsetY, 0f);
+
+                GameObject instance = Instantiate(toInstantiate, position, Quaternion.identity);
+
+                instance.transform.SetParent(room.RoomHolder);
             }
         }
     }
     void GenerateDoorways()
     {
-        Transform doorWayHolder = new GameObject("DoorWays").transform;
-        doorWayHolder.SetParent(roomHolder);
-
         foreach (var doorway in DoorwayPrefabs)
         {
             Doorway instance = Instantiate(doorway);
-            instance.transform.SetParent(doorWayHolder);
+            instance.OffsetDoorways(_adjacentOffsetX, _adjacentOffsetY);
+            instance.transform.SetParent(room.DoorwayHolder);
 
-            _doorways.Add(instance);
+            room.Doorways.Add(instance);
+        }
+    }
+}
+
+public class Room
+{
+    private readonly Transform roomHolder;
+    private readonly Transform doorwayHolder;
+    public Transform RoomHolder { get => roomHolder; }
+    public Transform DoorwayHolder { get => doorwayHolder; }
+    private List<Doorway> doorways;
+    public List<Doorway> Doorways { get => doorways; set => doorways = value; }
+
+    public Room()
+    {
+        roomHolder = new GameObject("Room").transform;
+        doorwayHolder = new GameObject("Doorways").transform;
+        doorways = new List<Doorway>();
+        
+        doorwayHolder.SetParent(roomHolder);
+    }
+
+    public void OpenAllDoors(bool open)
+    {
+        foreach(var doorway in doorways)
+        {
+            doorway.Open(open);
         }
     }
 }

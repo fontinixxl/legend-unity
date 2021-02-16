@@ -15,4 +15,3 @@ public abstract class PlayerBaseState
 
     public abstract void OnCollisionEnter();
 }
-
