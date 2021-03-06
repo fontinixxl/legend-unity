@@ -47,6 +47,9 @@ TagManager:
   - name: doorway
     uniqueID: 615405039
     locked: 0
+  - name: objects
+    uniqueID: 1841481537
+    locked: 0
   - name: entities
     uniqueID: 2512966301
     locked: 0

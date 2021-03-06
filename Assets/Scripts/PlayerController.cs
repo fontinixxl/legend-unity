@@ -8,8 +8,11 @@ public class PlayerController : MonoBehaviour
     
     // Rigidbody
     private Rigidbody2D _rigidbody2d;
+    private Collider2D _collider;
+
     [HideInInspector] public Rigidbody2D Rigidbody2d { get { return _rigidbody2d; } }
-    
+    [HideInInspector] public Collider2D Collider { get { return _collider; } }
+
     // Animator
     Animator _animator;
     [HideInInspector] public Animator Animator { get { return _animator; } }
@@ -19,11 +22,13 @@ public class PlayerController : MonoBehaviour
     public PlayerBaseState CurrentState { get { return _currentState; } }
     public readonly PlayerIdleState IdleState = new PlayerIdleState();
     public readonly PlayerWalkState WalkState = new PlayerWalkState();
+    public readonly PlayerShiftState ShiftState = new PlayerShiftState();
 
 
     void Start()
     {
         _rigidbody2d = GetComponent<Rigidbody2D>();
+        _collider = GetComponent<Collider2D>();
         _animator = GetComponent<Animator>();
         TransitionToState(IdleState);
     }
@@ -31,6 +36,11 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (_currentState != ShiftState && DungeonManager.Instance.Shifting)
+        {
+            TransitionToState(ShiftState);
+        }
+
         _currentState.Update();
     }
 
@@ -43,10 +53,5 @@ public class PlayerController : MonoBehaviour
     {
         _currentState = state;
         _currentState.EnterState(this);
-    }
-
-    public void EnableKinematic(bool enable)
-    {
-        _rigidbody2d.isKinematic = enable;
     }
 }

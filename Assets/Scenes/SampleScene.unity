@@ -329,6 +329,8 @@ MonoBehaviour:
   - {fileID: 4013269816099421081, guid: fc47bc60c21a6234dbc20f73a7c7c2df, type: 3}
   - {fileID: 5044448090193724112, guid: 64db6c9d19c37d247a4a4f8cc35f1912, type: 3}
   - {fileID: 7694227076358521321, guid: e2f512ccf32cac4418cc698eec2ee4c7, type: 3}
+  switchPrefab: {fileID: 8025449822072144588, guid: dc0814afbf44cf643ae4577b3bdaa2e0,
+    type: 3}
 --- !u!4 &656800737
 Transform:
   m_ObjectHideFlags: 0

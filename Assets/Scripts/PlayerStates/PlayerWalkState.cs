@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerWalkState : PlayerBaseState
 {
@@ -9,22 +7,15 @@ public class PlayerWalkState : PlayerBaseState
     public override void EnterState(PlayerController player)
     {
         base.EnterState(player);
-        // Transition Animator to Walking state (See animator states graph)
         player.Animator.SetBool("IsWalking", true);
     }
 
     public override void Update()
     {
-        // While shifting to the next room return to IdleState
-        if (DungeonManager.Instance.Shifting)
-        {
-            player.TransitionToState(player.IdleState);
-        }
-
         float horizontalMovement = Input.GetAxisRaw("Horizontal");
         float verticalMovement = Input.GetAxisRaw("Vertical");
 
-        // Force to allow the character to move on direction at time!
+        // Allow the character to move one direction at time!
         movement = Vector2.zero;
         if (horizontalMovement != 0.0f)
         {
@@ -35,8 +26,8 @@ public class PlayerWalkState : PlayerBaseState
             movement.y = verticalMovement;
         }
 
-        // Update the Animator only when there is motion
-        if (horizontalMovement != 0.0f || verticalMovement != 0.0f)
+        // Update the Animator only when motion
+        if (movement != Vector2.zero)
         {
             player.Animator.SetFloat("MoveX", horizontalMovement);
             player.Animator.SetFloat("MoveY", verticalMovement);
@@ -56,10 +47,4 @@ public class PlayerWalkState : PlayerBaseState
         player.Rigidbody2d.MovePosition(position);
 
     }
-
-    public override void OnCollisionEnter()
-    {
-        throw new System.NotImplementedException();
-    }
-
 }

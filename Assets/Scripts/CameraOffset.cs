@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 static class Const
 {
@@ -23,6 +21,11 @@ static class Const
 public class CameraOffset : MonoBehaviour
 {
     private void Start()
+    {
+        ResetCameraToCenter();
+    }
+
+    public void ResetCameraToCenter()
     {
         transform.position = new Vector3(Const.ScreenWitdth / 2, Const.ScreenHeight / 2.0f, transform.position.z);
     }
