@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System;
 using System.Collections.Generic;
-using UnityEngine.U2D;
 using Random = UnityEngine.Random;
 
 public class RoomManager : MonoBehaviour
@@ -32,27 +31,61 @@ public class RoomManager : MonoBehaviour
 
     public List<Doorway> DoorwayPrefabs;
 
+    public GameObject switchPrefab;
+
     // A list of possible locations to place tiles.
     //private List<Vector3> gridPositions = new List<Vector3>();
 
-    private float _adjacentOffsetX;
-    private float _adjacentOffsetY;
+    private int _adjacentOffsetX;
+    private int _adjacentOffsetY;
 
     private Room room;
+    private GameObject switchInstance;
 
-    public Room GenerateRoom(float offsetX, float offsetY)
+    public Room GenerateRoom(int offsetX, int offsetY)
     {
         _adjacentOffsetX = offsetX;
         _adjacentOffsetY = offsetY;
 
         room = new Room();
+
         GenerateWallsAndFloors();
         GenerateDoorways();
+        GenerateObjects();
 
         return room;
     }
 
-	// Generate the walls and floor of the room, randomizing the various varieties
+    private void Update()
+    {
+        // Debug: reposition switch when "R" pressed
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            if (switchInstance != null)
+            {
+                switchInstance.transform.position = GetRandomPosition();
+            }
+        }
+    }
+
+    private void GenerateObjects()
+    {
+        Vector2 randPos = GetRandomPosition();
+        Vector2 offset = new Vector2(_adjacentOffsetX, _adjacentOffsetY);
+        switchInstance = Instantiate(switchPrefab, randPos + offset, Quaternion.identity);
+        switchInstance.transform.SetParent(room.Holder);
+    }
+
+    public static Vector2 GetRandomPosition()
+    {
+        // + 1 is the offset for the walls
+        float targetHorizontalPos = Random.Range(Const.MapRenderOffsetX + 1 , Const.MapWitdth);
+        float targetVerticalPos = Random.Range(Const.MapRenderOffsetY + 1, Const.MapHeight);
+
+        return new Vector2(targetHorizontalPos, targetVerticalPos);
+    }
+
+    // Generate the walls and floor of the room, randomizing the various varieties
     void GenerateWallsAndFloors()
     {
         for (int y = 0; y < Const.MapHeight; y++)
@@ -108,7 +141,7 @@ public class RoomManager : MonoBehaviour
 
                 GameObject instance = Instantiate(toInstantiate, position, Quaternion.identity);
 
-                instance.transform.SetParent(room.RoomHolder);
+                instance.transform.SetParent(room.Holder);
             }
         }
     }
@@ -117,7 +150,7 @@ public class RoomManager : MonoBehaviour
         foreach (var doorway in DoorwayPrefabs)
         {
             Doorway instance = Instantiate(doorway);
-            instance.OffsetDoorways(_adjacentOffsetX, _adjacentOffsetY);
+            instance.OffsetDoorway(_adjacentOffsetX, _adjacentOffsetY);
             instance.transform.SetParent(room.DoorwayHolder);
 
             room.Doorways.Add(instance);
@@ -129,7 +162,7 @@ public class Room
 {
     private readonly Transform roomHolder;
     private readonly Transform doorwayHolder;
-    public Transform RoomHolder { get => roomHolder; }
+    public Transform Holder { get => roomHolder; }
     public Transform DoorwayHolder { get => doorwayHolder; }
     private List<Doorway> doorways;
     public List<Doorway> Doorways { get => doorways; set => doorways = value; }
@@ -147,7 +180,15 @@ public class Room
     {
         foreach(var doorway in doorways)
         {
-            doorway.Open(open);
+            doorway.IsOpen = open;
+        }
+    }
+
+    public void DebugDoorStatus()
+    {
+        foreach (var doorway in doorways)
+        {
+            Debug.Log("Doorway " + doorway.Direction + " " + doorway.IsOpen);
         }
     }
 }

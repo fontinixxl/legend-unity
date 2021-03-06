@@ -11,35 +11,43 @@ public class Doorway : MonoBehaviour
     public Sprite spriteDoorOpen;
     public Sprite spriteDoorClosed;
 
-    public Direction _direction;
-    private bool _open;
-    //public bool IsOpen { get { return _open; } }
+    public Direction Direction;
+
+    public bool _open;
+    public bool IsOpen
+    {
+        get => _open;
+        set
+        {
+            spriteRenderer.sprite = value ? spriteDoorOpen : spriteDoorClosed;
+            _open = value;
+        }
+    }
 
     private SpriteRenderer spriteRenderer;
 
-    public static event Action<Direction, Transform> PlayerCollideDoorway;
+    public static event Action<Doorway> PlayerCollideDoorway;
 
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
-        _open = false;
-        spriteRenderer.sprite = !_open ? spriteDoorClosed : spriteDoorOpen;
+        IsOpen = false;
     }
 
-    public void OffsetDoorways(float offsetX, float offsetY)
+    public void OffsetDoorway(float offsetX, float offsetY)
     {
         float x, y;
-        if (_direction == Direction.BOTTOM)
+        if (Direction == Direction.BOTTOM)
         {
             x = Const.MapWitdth * 0.5f;
             y = 0f;
         }
-        else if (_direction == Direction.LEFT)
+        else if (Direction == Direction.LEFT)
         {
             x = 0;
             y = Const.MapHeight * 0.5f;
         }
-        else if (_direction == Direction.TOP)
+        else if (Direction == Direction.TOP)
         {
             x = Const.MapWitdth * 0.5f;
             y = Const.MapHeight;
@@ -54,28 +62,15 @@ public class Doorway : MonoBehaviour
         transform.position = new Vector3(x + offsetX, y + offsetY, 0f);
     }
 
-    private void Update()
-    {
-        //TODO: Delete it; just for testing the open / close mechanism
-        if (Input.GetKeyDown(KeyCode.O))
-        {
-            _open = !_open;
-            spriteRenderer.sprite = !_open ? spriteDoorClosed : spriteDoorOpen;
-        }
-    }
-
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (!DungeonManager.Instance.Shifting && collision.CompareTag("Player") && _open)
-        {
-            // shift player to center of door to avoid phasing through wall
-            PlayerCollideDoorway?.Invoke(_direction, transform);
-        }
-    }
+        if (DungeonManager.Instance.Shifting)
+            return;
 
-    public void Open(bool open)
-    {
-        _open = open;
-        spriteRenderer.sprite = !open ? spriteDoorClosed : spriteDoorOpen;
+        if (collision.CompareTag("Player") && IsOpen)
+        {
+            // Shift player to the center of door to avoid phasing through wall
+            PlayerCollideDoorway?.Invoke(this);
+        }
     }
 }

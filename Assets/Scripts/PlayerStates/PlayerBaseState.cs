@@ -11,7 +11,7 @@ public abstract class PlayerBaseState
     public abstract void Update();
 
     // TODO: I don't like I am force to implement this when not all the subclasses will use
-    public abstract void FixedUpdate();
+    public virtual void FixedUpdate() { }
 
-    public abstract void OnCollisionEnter();
+    //public abstract void OnCollisionEnter();
 }

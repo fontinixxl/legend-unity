@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.U2D;
 
 public class DungeonManager : Singleton<DungeonManager>
 {
@@ -14,150 +10,175 @@ public class DungeonManager : Singleton<DungeonManager>
     public RoomManager RoomManager;
 
     private Room _currentRoom;
-    private Vector3 _adjacentOffset;
     private Room _nextRoom;
 
-    private Transform _player;
+    private Transform _playerTransform;
     private PlayerController _playerController;
 
-    public bool Shifting;
+    private bool _shifting;
+    public bool Shifting { get => _shifting; }
+
+    private int _offsetY;
+    private int _offsetX;
     private readonly float _cameraSpeed = 15.0f;
 
     protected override void Awake()
     {
         base.Awake();
-
         _mainCamera = Camera.main.transform;
-
         Vector2 position = new Vector2(Const.ScreenWitdth / 2.0f, Const.ScreenHeight / 2.0f);
         _playerController = Instantiate(playerPrefab, position, Quaternion.identity);
-        _player = _playerController.transform;
-
-        Shifting = false;
+        _playerTransform = _playerController.transform;
+        _offsetX = _offsetY = 0;
+        _shifting = false;
     }
 
     private void Start()
     {
         DontDestroyOnLoad(gameObject);
-        Doorway.PlayerCollideDoorway += OnDoorWayTriggered;
 
-        _adjacentOffset = new Vector2(0f, 0f);
-        _currentRoom = RoomManager.GenerateRoom(_adjacentOffset.x, _adjacentOffset.y);
+        Doorway.PlayerCollideDoorway += PlayerCollideDoorwayEventHandler;
+        Switch.SwitchPressed += SwitchPressedEventHandler;
+
+        _currentRoom = RoomManager.GenerateRoom(_offsetX, _offsetY);
     }
 
-    private void OnDoorWayTriggered(Direction direction, Transform doorway)
+    // Triggered when player press the switch.
+    // Open all dors on the current room
+    private void SwitchPressedEventHandler()
     {
-        StartCoroutine(PrepareForShifting(direction, doorway));
+        _currentRoom.OpenAllDoors(true);
     }
 
-    private IEnumerator PrepareForShifting(Direction direction, Transform doorway)
+    // Trigger camera translation and adjustment of rooms whenever the player triggers a shift
+    // via a doorway collision
+    private void PlayerCollideDoorwayEventHandler(Doorway doorway)
     {
-        int offsetX, offsetY;
-        offsetX = offsetY = 0;
+        StartCoroutine(ShiftRoom(doorway));
+    }
+
+    private IEnumerator ShiftRoom(Doorway doorway)
+    {
+        //Debug.Log("Callback recieved: Starting shifting process");
+        _shifting = true;
+        _offsetX = _offsetY = 0;
+        float doorwayPosX = doorway.transform.position.x;
+        float doorwayPosY = doorway.transform.position.y;
         Vector2 doorCenter = Vector2.zero;
-        switch (direction)
+
+        switch (doorway.Direction)
         {
             case Direction.TOP:
-                doorCenter = new Vector2( doorway.position.x + Const.UnitSize, _player.position.y);
-                offsetY = Const.ScreenHeight;
+                doorCenter = new Vector2(doorwayPosX + Const.UnitSize, _playerTransform.position.y);
+                _offsetY = Const.ScreenHeight;
                 break;
             case Direction.BOTTOM:
-                doorCenter = new Vector2( doorway.position.x + Const.UnitSize, _player.position.y);
-                offsetY = -Const.ScreenHeight;
+                doorCenter = new Vector2(doorwayPosX + Const.UnitSize, _playerTransform.position.y);
+                _offsetY = -Const.ScreenHeight;
                 break;
             case Direction.RIGHT:
-                doorCenter = new Vector2(_player.position.x, doorway.position.y + Const.UnitSize);
-                offsetX = Const.ScreenWitdth;
+                doorCenter = new Vector2(_playerTransform.position.x, doorwayPosY + Const.UnitSize);
+                _offsetX = Const.ScreenWitdth;
                 break;
             case Direction.LEFT:
-                doorCenter = new Vector2(_player.position.x, doorway.position.y + Const.UnitSize);
-                offsetX = -Const.ScreenWitdth;
+                doorCenter = new Vector2(_playerTransform.position.x, doorwayPosY + Const.UnitSize);
+                _offsetX = -Const.ScreenWitdth;
                 break;
         }
 
-        _adjacentOffset.x += offsetX;
-        _adjacentOffset.y += offsetY;
-
-        // Shift player to center of door to avoid phasing through wall
         yield return StartCoroutine(CenterPlayerWithDoor(doorCenter));
 
-        // Generate Adjacent room and keep the doors opened until player has crossed.
-        _nextRoom = RoomManager.GenerateRoom(_adjacentOffset.x, _adjacentOffset.y);
-        _nextRoom.OpenAllDoors(true);
-        Shifting = true;
-        
-        yield return StartCoroutine(Shift(offsetX, offsetY));
+        _nextRoom = RoomManager.GenerateRoom(_offsetX, _offsetY);
 
-        _nextRoom.OpenAllDoors(false);
-        // Point to transitioned room as the new active room, pointing to an empty room next
-        Destroy(_currentRoom.RoomHolder.gameObject);
-        _currentRoom = _nextRoom;
-        _nextRoom = null;
-        Shifting = false;
+        yield return StartCoroutine(PerformShifting());
+
+        FinishShifting();
     }
 
+    // Tween the player position so they move through the doorway
     IEnumerator CenterPlayerWithDoor(Vector2 target)
     {
-        while (Vector3.Distance(_player.position, target) > 0.0001f)
+        //Debug.Log("Centering Player With Door");
+        while (Vector3.Distance(_playerTransform.position, target) > 0.0001f)
         {
             float step = _playerController.speed * Time.deltaTime;
-            _player.transform.position = Vector3.MoveTowards(_player.position, target, step);
-            yield return new WaitForEndOfFrame();
+            _playerTransform.transform.position = Vector3.MoveTowards(_playerTransform.position, target, step);
+            yield return null;
         }
+
+        // We want the player to be looking at the doorway it is about to cross,
+        // in case is not comming straight to the door
+        _playerController.Animator.SetFloat("MoveX", _offsetX);
+        _playerController.Animator.SetFloat("MoveY", _offsetY);
     }
 
-    // Shift the camera and the player smoothly towards the adjacent Room
-    IEnumerator Shift(int offsetX, int offsetY)
+    // Tween the camera in whichever direction the new room is in, as well as the player to be
+    // at the opposite door in the next room, walking through the wall(which is stenciled)
+    IEnumerator PerformShifting()
     {
-        Vector3 playerTarget = _player.position;
-
-        if (offsetX < 0)
+        //Debug.Log("Performing Shifting");
+        Vector3 playerTarget = _playerTransform.position;
+        if (_offsetX < 0)
         {
             // LEFT
-            playerTarget.x = _adjacentOffset.x + Const.MapRenderOffsetX + Const.MapWitdth - Const.UnitSize - 0.5f;
+            playerTarget.x = _offsetX + Const.MapRenderOffsetX + Const.MapWitdth - Const.UnitSize - 0.5f;
         }
-        else if (offsetX > 0)
+        else if (_offsetX > 0)
         {
             // RIGHT
-            playerTarget.x = _adjacentOffset.x + Const.MapRenderOffsetX + Const.UnitSize + 0.5f;
+            playerTarget.x = _offsetX + Const.MapRenderOffsetX + Const.UnitSize + 0.5f;
         }
-        else if (offsetY < 0)
+        else if (_offsetY < 0)
         {
             // BOTTOM
-            playerTarget.y = _adjacentOffset.y + Const.MapRenderOffsetY + Const.MapHeight - Const.UnitSize;
+            playerTarget.y = _offsetY + Const.MapRenderOffsetY + Const.MapHeight - Const.UnitSize - 0.5f;
         }
         else
         {
             // TOP
-            playerTarget.y = _adjacentOffset.y + Const.MapRenderOffsetY + Const.UnitSize + 0.5f;
+            playerTarget.y = _offsetY + Const.MapRenderOffsetY + Const.UnitSize + 0.5f;
         }
 
-        // Get the Units the camera will have to move on the offset
-        // If the offsetY is zero, means we are moving Horizontaly
-        float cameraDistance = (offsetY == 0) ? Const.ScreenWitdth : Const.ScreenHeight;
+
+        // Calculate the time (in seconds) it will take the camera to reach the target position
+        float cameraDistance = (_offsetY == 0) ? Const.ScreenWitdth : Const.ScreenHeight;
         float cameraTimeToTarget = cameraDistance / _cameraSpeed;
 
-        float playerDistance = Vector2.Distance(_player.position, playerTarget);
-        // playerSpeed is calculated based on the time it will take the camera
-        // to reach the target position, so both the camera and player will finish at the same time.
-        float playerSpeed = playerDistance / cameraTimeToTarget;
+        // playerVelocity is calculated based on the time it will take for the camera
+        // to reach the target position. So both the camera and player will finish shifting at the same time.
+        float playerVelocity = Vector2.Distance(_playerTransform.position, playerTarget) / cameraTimeToTarget;
 
-        // Calculate the new camera position
+        // Calculate the target camera position
         Vector3 target = _mainCamera.position;
-        target.x += offsetX;
-        target.y += offsetY;
+        target.x += _offsetX;
+        target.y += _offsetY;
 
-        // Enable Player kinematic so the player can be move throught the walls and doors
-        _playerController.EnableKinematic(true);
+        _nextRoom.OpenAllDoors(true);
 
         while (Vector3.Distance(_mainCamera.position, target) > 0.0001f)
         {
             float step = _cameraSpeed * Time.deltaTime;
             _mainCamera.position = Vector3.MoveTowards(_mainCamera.position, target, step);
-            _player.position = Vector3.MoveTowards(_player.position, playerTarget,  playerSpeed * Time.deltaTime);
-            yield return new WaitForEndOfFrame();
+            _playerTransform.position = Vector3.MoveTowards(_playerTransform.position, playerTarget,  playerVelocity * Time.deltaTime);
+            yield return null;
         }
 
-        _playerController.EnableKinematic(false);
+        _nextRoom.OpenAllDoors(false);
+    }
+
+    // Resets a few variables needed to perform a camera shift and swaps the next and
+    // current room.
+    private void FinishShifting()
+    {
+        Destroy(_currentRoom.Holder.gameObject);
+        _currentRoom = _nextRoom;
+        _nextRoom = null;
+
+        _currentRoom.Holder.Translate(new Vector3(-_offsetX, -_offsetY));
+        // Reset player to the correct location in the room
+        _playerTransform.Translate(new Vector2(-_offsetX, -_offsetY));
+        _mainCamera.GetComponent<CameraOffset>().ResetCameraToCenter();
+
+        _shifting = false;
     }
 }
