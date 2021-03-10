@@ -1,12 +1,17 @@
 ﻿using UnityEngine;
 
-public class PlayerIdleState : PlayerBaseState
+public class PlayerIdleState : BaseState
 {
-    public override void EnterState(PlayerController player)
+    private PlayerStateManager _player;
+
+    public PlayerIdleState(EntityStateManager entity)
     {
-        base.EnterState(player);
+        _player = (PlayerStateManager)entity;
+    }
+    public override void EnterState()
+    {
         // Transition Animator to Idle (See Animator states graph)
-        player.Animator.SetBool("IsWalking", false);
+        _player.Animator.SetBool("IsWalking", false);
     }
 
     public override void Update()
@@ -15,7 +20,7 @@ public class PlayerIdleState : PlayerBaseState
         if (Input.GetAxisRaw("Horizontal") != 0.0f || 
             Input.GetAxisRaw("Vertical") != 0.0f)
         {
-            player.TransitionToState(player.WalkState);
+            _player.TransitionToState(_player.WalkState);
         }
 
         // TODO: Add swingSword Input and transition to swing-sword state

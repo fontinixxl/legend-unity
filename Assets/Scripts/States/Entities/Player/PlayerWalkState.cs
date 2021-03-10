@@ -1,13 +1,19 @@
 ﻿using UnityEngine;
 
-public class PlayerWalkState : PlayerBaseState
+public class PlayerWalkState : BaseState
 {
     private Vector2 movement;
+    
+    private PlayerStateManager _player;
 
-    public override void EnterState(PlayerController player)
+    public PlayerWalkState(EntityStateManager player)
     {
-        base.EnterState(player);
-        player.Animator.SetBool("IsWalking", true);
+        _player = (PlayerStateManager)player;
+    }
+
+    public override void EnterState()
+    {
+        _player.Animator.SetBool("IsWalking", true);
     }
 
     public override void Update()
@@ -29,22 +35,22 @@ public class PlayerWalkState : PlayerBaseState
         // Update the Animator only when motion
         if (movement != Vector2.zero)
         {
-            player.Animator.SetFloat("MoveX", horizontalMovement);
-            player.Animator.SetFloat("MoveY", verticalMovement);
+            _player.Animator.SetFloat("MoveX", horizontalMovement);
+            _player.Animator.SetFloat("MoveY", verticalMovement);
         }
         else
         {
             // No motion, transition to Idle keeping the previous animation
-            player.TransitionToState(player.IdleState);
+            _player.TransitionToState(_player.IdleState);
         }
     }
 
     public override void FixedUpdate()
     {
-        Vector2 position = player.Rigidbody2d.position;
-        position += player.speed * movement * Time.fixedDeltaTime;
+        Vector2 position = _player.Rigidbody2d.position;
+        position += _player.WalkSpeed * movement * Time.fixedDeltaTime;
 
-        player.Rigidbody2d.MovePosition(position);
+        _player.Rigidbody2d.MovePosition(position);
 
     }
 }

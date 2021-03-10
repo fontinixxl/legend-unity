@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1854733876280293999}
   - component: {fileID: 5814719109024092030}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: New Sprite Mask
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -93,7 +93,7 @@ GameObject:
   - component: {fileID: 4295414732396803341}
   - component: {fileID: 5044448090193724112}
   - component: {fileID: 3763103943581346071}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: doorway_right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -183,6 +183,7 @@ MonoBehaviour:
   spriteDoorClosed: {fileID: -4583591363504392256, guid: 0688132fe7e7d124987dc6f41f17795a,
     type: 3}
   Direction: 1
+  _open: 0
 --- !u!61 &3763103943581346071
 BoxCollider2D:
   m_ObjectHideFlags: 0

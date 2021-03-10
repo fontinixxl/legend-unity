@@ -30,8 +30,8 @@ public class RoomManager : MonoBehaviour
     public GameObject bottomRightCornerTile;
 
     public List<Doorway> DoorwayPrefabs;
-
     public GameObject switchPrefab;
+    public GameObject[] enemyPrefabs;
 
     // A list of possible locations to place tiles.
     //private List<Vector3> gridPositions = new List<Vector3>();
@@ -52,6 +52,7 @@ public class RoomManager : MonoBehaviour
         GenerateWallsAndFloors();
         GenerateDoorways();
         GenerateObjects();
+        GenerateEntities();
 
         return room;
     }
@@ -63,29 +64,29 @@ public class RoomManager : MonoBehaviour
         {
             if (switchInstance != null)
             {
-                switchInstance.transform.position = GetRandomPosition();
+                switchInstance.transform.position = GetRandomPosition(_adjacentOffsetX, _adjacentOffsetY);
             }
         }
     }
 
     private void GenerateObjects()
     {
-        Vector2 randPos = GetRandomPosition();
-        Vector2 offset = new Vector2(_adjacentOffsetX, _adjacentOffsetY);
-        switchInstance = Instantiate(switchPrefab, randPos + offset, Quaternion.identity);
+        Vector2 randPos = GetRandomPosition(_adjacentOffsetX, _adjacentOffsetY);
+        switchInstance = Instantiate(switchPrefab, randPos, Quaternion.identity);
         switchInstance.transform.SetParent(room.Holder);
     }
 
-    public static Vector2 GetRandomPosition()
+    // TOOD: Move to another class with all the Screen and camera stuff.
+    public static Vector2 GetRandomPosition(int offsetX, int offsetY)
     {
         // + 1 is the offset for the walls
         float targetHorizontalPos = Random.Range(Const.MapRenderOffsetX + 1 , Const.MapWitdth);
         float targetVerticalPos = Random.Range(Const.MapRenderOffsetY + 1, Const.MapHeight);
 
-        return new Vector2(targetHorizontalPos, targetVerticalPos);
+        return new Vector2(targetHorizontalPos + offsetX, targetVerticalPos + offsetY);
     }
 
-    // Generate the walls and floor of the room, randomizing the various varieties
+    // Generate the walls and floor of the room, randomazing the various varieties
     void GenerateWallsAndFloors()
     {
         for (int y = 0; y < Const.MapHeight; y++)
@@ -154,6 +155,16 @@ public class RoomManager : MonoBehaviour
             instance.transform.SetParent(room.DoorwayHolder);
 
             room.Doorways.Add(instance);
+        }
+    }
+
+    void GenerateEntities()
+    {
+        foreach (var enemy in enemyPrefabs)
+        {
+            Vector2 randPos = GetRandomPosition(_adjacentOffsetX, _adjacentOffsetY);
+            GameObject enemiInstance = Instantiate(enemy, randPos, Quaternion.identity);
+            enemiInstance.transform.SetParent(room.Holder);
         }
     }
 }

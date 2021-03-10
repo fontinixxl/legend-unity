@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 6722459395707397420}
   - component: {fileID: 4901872406146617353}
   - component: {fileID: 8565195792054350849}
-  m_Layer: 8
+  - component: {fileID: 2023742417595215757}
+  m_Layer: 0
   m_Name: bottom_left_corner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -109,3 +110,24 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!50 &2023742417595215757
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5120443884539434152}
+  m_BodyType: 2
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 1
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0

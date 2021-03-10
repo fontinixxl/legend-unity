@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class DungeonManager : Singleton<DungeonManager>
 {
-    public PlayerController playerPrefab;
+    public PlayerStateManager playerPrefab;
 
     private Transform _mainCamera;
 
@@ -13,7 +13,7 @@ public class DungeonManager : Singleton<DungeonManager>
     private Room _nextRoom;
 
     private Transform _playerTransform;
-    private PlayerController _playerController;
+    private PlayerStateManager _playerController;
 
     private bool _shifting;
     public bool Shifting { get => _shifting; }
@@ -101,7 +101,7 @@ public class DungeonManager : Singleton<DungeonManager>
         //Debug.Log("Centering Player With Door");
         while (Vector3.Distance(_playerTransform.position, target) > 0.0001f)
         {
-            float step = _playerController.speed * Time.deltaTime;
+            float step = _playerController.WalkSpeed * Time.deltaTime;
             _playerTransform.transform.position = Vector3.MoveTowards(_playerTransform.position, target, step);
             yield return null;
         }

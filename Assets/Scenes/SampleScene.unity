@@ -331,6 +331,8 @@ MonoBehaviour:
   - {fileID: 7694227076358521321, guid: e2f512ccf32cac4418cc698eec2ee4c7, type: 3}
   switchPrefab: {fileID: 8025449822072144588, guid: dc0814afbf44cf643ae4577b3bdaa2e0,
     type: 3}
+  enemyPrefabs:
+  - {fileID: 8390546505969251317, guid: 239543ea271e4684db165c0983ca8a96, type: 3}
 --- !u!4 &656800737
 Transform:
   m_ObjectHideFlags: 0
@@ -377,7 +379,6 @@ MonoBehaviour:
   playerPrefab: {fileID: 5828633382976372668, guid: 589728e378a653745937697366b7850a,
     type: 3}
   RoomManager: {fileID: 656800736}
-  Shifting: 0
 --- !u!4 &1481335976
 Transform:
   m_ObjectHideFlags: 0
