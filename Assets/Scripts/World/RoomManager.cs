@@ -79,9 +79,9 @@ public class RoomManager : MonoBehaviour
     // TOOD: Move to another class with all the Screen and camera stuff.
     public static Vector2 GetRandomPosition(int offsetX, int offsetY)
     {
-        // + 1 is the offset for the walls
-        float targetHorizontalPos = Random.Range(Const.MapRenderOffsetX + 1 , Const.MapWitdth);
-        float targetVerticalPos = Random.Range(Const.MapRenderOffsetY + 1, Const.MapHeight);
+        // + 2 is the offset for the walls and one extra so it isn't either next to the walls
+        float targetHorizontalPos = Random.Range(Const.MapRenderOffsetX + 2 , Const.MapWitdth - 1);
+        float targetVerticalPos = Random.Range(Const.MapRenderOffsetY + 2, Const.MapHeight - 1);
 
         return new Vector2(targetHorizontalPos + offsetX, targetVerticalPos + offsetY);
     }
@@ -181,6 +181,9 @@ public class Room
     public Room()
     {
         roomHolder = new GameObject("Room").transform;
+        roomHolder.gameObject.AddComponent<Rigidbody2D>();
+        roomHolder.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
+        roomHolder.gameObject.AddComponent<CompositeCollider2D>();
         doorwayHolder = new GameObject("Doorways").transform;
         doorways = new List<Doorway>();
         
