@@ -57,18 +57,6 @@ public class RoomManager : MonoBehaviour
         return room;
     }
 
-    private void Update()
-    {
-        // Debug: reposition switch when "R" pressed
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            if (switchInstance != null)
-            {
-                switchInstance.transform.position = GetRandomPosition(_adjacentOffsetX, _adjacentOffsetY);
-            }
-        }
-    }
-
     private void GenerateObjects()
     {
         Vector2 randPos = GetRandomPosition(_adjacentOffsetX, _adjacentOffsetY);
@@ -181,9 +169,11 @@ public class Room
     public Room()
     {
         roomHolder = new GameObject("Room").transform;
+        // Add the CompositeCollider to the room so there is only one collider for the walls.
         roomHolder.gameObject.AddComponent<Rigidbody2D>();
         roomHolder.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
         roomHolder.gameObject.AddComponent<CompositeCollider2D>();
+
         doorwayHolder = new GameObject("Doorways").transform;
         doorways = new List<Doorway>();
         
