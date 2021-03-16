@@ -30,9 +30,4 @@ public class EnemyStateManager : EntityStateManager
         _currentState.ProcessAI();
         base.Update();
     }
-
-    protected void OnCollisionExit2D(Collision2D collision)
-    {
-        _currentState.OnCollisionExit2D(collision);
-    }
 }

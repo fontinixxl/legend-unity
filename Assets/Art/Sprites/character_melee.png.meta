@@ -52,52 +52,52 @@ TextureImporter:
     second: modified gfx melee sprites_15
   - first:
       213: -8469484124112742317
-    second: character_melee_0
+    second: melee_down_1
   - first:
       213: 6220209624863962548
-    second: character_melee_1
+    second: melee_down_2
   - first:
       213: 8462791550523591961
-    second: character_melee_2
+    second: melee_down_3
   - first:
       213: -752113029865405801
-    second: character_melee_3
+    second: melee_down_4
   - first:
       213: -8369994272277457737
-    second: character_melee_4
+    second: melee_up_1
   - first:
       213: -3806844008738883764
-    second: character_melee_5
+    second: melee_up_2
   - first:
       213: 7341599064366512766
-    second: character_melee_6
+    second: melee_up_3
   - first:
       213: 7932112322039398788
-    second: character_melee_7
+    second: melee_up_4
   - first:
       213: -321182979990603938
-    second: character_melee_8
+    second: melee_right_1
   - first:
       213: 1438544111129933848
-    second: character_melee_9
+    second: melee_right_2
   - first:
       213: 95753313073587612
-    second: character_melee_10
+    second: melee_right_3
   - first:
       213: -3016878697772246533
-    second: character_melee_11
+    second: melee_right_4
   - first:
       213: -1963910032842065005
-    second: character_melee_12
+    second: melee_left_1
   - first:
       213: 1792682519272675302
-    second: character_melee_13
+    second: melee_left_2
   - first:
       213: 8934182625291254546
-    second: character_melee_14
+    second: melee_left_3
   - first:
       213: -8502530039414158099
-    second: character_melee_15
+    second: melee_left_4
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -195,7 +195,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: character_melee_0
+      name: melee_down_1
       rect:
         serializedVersion: 2
         x: 0
@@ -216,7 +216,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: character_melee_1
+      name: melee_down_2
       rect:
         serializedVersion: 2
         x: 32
@@ -237,7 +237,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: character_melee_2
+      name: melee_down_3
       rect:
         serializedVersion: 2
         x: 64
@@ -258,7 +258,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: character_melee_3
+      name: melee_down_4
       rect:
         serializedVersion: 2
         x: 96
@@ -279,7 +279,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: character_melee_4
+      name: melee_up_1
       rect:
         serializedVersion: 2
         x: 0
@@ -300,7 +300,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: character_melee_5
+      name: melee_up_2
       rect:
         serializedVersion: 2
         x: 32
@@ -321,7 +321,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: character_melee_6
+      name: melee_up_3
       rect:
         serializedVersion: 2
         x: 64
@@ -342,7 +342,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: character_melee_7
+      name: melee_up_4
       rect:
         serializedVersion: 2
         x: 96
@@ -363,7 +363,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: character_melee_8
+      name: melee_right_1
       rect:
         serializedVersion: 2
         x: 0
@@ -384,7 +384,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: character_melee_9
+      name: melee_right_2
       rect:
         serializedVersion: 2
         x: 32
@@ -405,7 +405,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: character_melee_10
+      name: melee_right_3
       rect:
         serializedVersion: 2
         x: 64
@@ -426,7 +426,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: character_melee_11
+      name: melee_right_4
       rect:
         serializedVersion: 2
         x: 96
@@ -447,7 +447,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: character_melee_12
+      name: melee_left_1
       rect:
         serializedVersion: 2
         x: 0
@@ -468,7 +468,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: character_melee_13
+      name: melee_left_2
       rect:
         serializedVersion: 2
         x: 32
@@ -489,7 +489,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: character_melee_14
+      name: melee_left_3
       rect:
         serializedVersion: 2
         x: 64
@@ -510,7 +510,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: character_melee_15
+      name: melee_left_4
       rect:
         serializedVersion: 2
         x: 96

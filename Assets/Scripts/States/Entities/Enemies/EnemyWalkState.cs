@@ -71,6 +71,7 @@ public class EnemyWalkState : BaseState
 
         enemy.Rigidbody2d.MovePosition(position);
     }
+
     private void UpdateAnimation()
     {
         enemy.Animator.SetFloat("MoveX", enemy.Direction.x);
