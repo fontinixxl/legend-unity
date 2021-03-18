@@ -1,5 +1,4 @@
-﻿
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerStateManager : EntityStateManager
 {
@@ -40,15 +39,4 @@ public class PlayerStateManager : EntityStateManager
 
         base.Update();
     }
-
-    // Triggerd by the Sword Hitbox collider (player's child gameobject)
-    public void OnTriggerEnter2D(Collider2D collision)
-    {
-        //Debug.Log("OnTriggerEnterd Sword");
-        if (collision.CompareTag("Enemy"))
-        {
-            Debug.Log("Hit Enemey!");
-        }
-    }
-
 }

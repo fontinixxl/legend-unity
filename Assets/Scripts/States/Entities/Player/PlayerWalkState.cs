@@ -2,7 +2,7 @@
 
 public class PlayerWalkState : BaseState
 {
-    private Vector2 movement;
+    //private Vector2 movement;
     
     private PlayerStateManager _player;
 
@@ -22,7 +22,7 @@ public class PlayerWalkState : BaseState
         float verticalMovement = Input.GetAxisRaw("Vertical");
 
         // Allow the character to move one direction at time!
-        movement = Vector2.zero;
+        Vector2 movement = Vector2.zero;
         if (horizontalMovement != 0.0f)
         {
             movement.x = horizontalMovement;
@@ -35,6 +35,7 @@ public class PlayerWalkState : BaseState
         // Update the Animator only when motion
         if (movement != Vector2.zero)
         {
+            _player.Direction = movement;
             _player.Animator.SetFloat("MoveX", horizontalMovement);
             _player.Animator.SetFloat("MoveY", verticalMovement);
         }
@@ -48,7 +49,7 @@ public class PlayerWalkState : BaseState
     public override void FixedUpdate()
     {
         Vector2 position = _player.Rigidbody2d.position;
-        position += _player.WalkSpeed * movement * Time.fixedDeltaTime;
+        position += _player.WalkSpeed * _player.Direction * Time.fixedDeltaTime;
 
         _player.Rigidbody2d.MovePosition(position);
 

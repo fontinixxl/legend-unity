@@ -3,7 +3,7 @@ using Random = UnityEngine.Random;
 
 public class EnemyIdleState : BaseState
 {
-    private EnemyStateManager _enemy;
+    private readonly EnemyStateManager _enemy;
     
     // used for AI waiting
     private float _waitDuration;

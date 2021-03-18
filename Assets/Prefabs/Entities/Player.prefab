@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1801965046}
   m_Layer: 10
   m_Name: Weapon Hitbox Vertical
-  m_TagString: Untagged
+  m_TagString: Weapon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -105,7 +105,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71b3ae141c5cf9e469c32a13082af6dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  walkSpeed: 3
+  walkSpeed: 6
+  _thrust: 14
 --- !u!212 &5828633382976372659
 SpriteRenderer:
   m_ObjectHideFlags: 0

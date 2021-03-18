@@ -15,9 +15,12 @@ public abstract class EntityStateManager : MonoBehaviour
     protected BaseState _currentState;
     public BaseState CurrentState { get { return _currentState; } }
 
+    // Others
     [SerializeField]
     protected float walkSpeed = 3.0f;
     public float WalkSpeed { get { return walkSpeed; } }
+    protected Vector2 _direction;
+    public Vector2 Direction { get => _direction; set => _direction = value; }
 
     protected virtual void Start()
     {
@@ -45,5 +48,10 @@ public abstract class EntityStateManager : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D collision)
     {
         _currentState.OnCollisionEnter2D(collision);
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        _currentState.OnCollisionExit2D(collision);
     }
 }

@@ -1,16 +1,15 @@
-﻿
-using UnityEngine;
+﻿using UnityEngine;
 
 public class EnemyWalkState : BaseState
 {
-    private EnemyStateManager enemy;
+    private readonly EnemyStateManager enemy;
 
     private float _moveDuration;
     private float _movementTimer;
     // keeps track of whether we just hit a wall
     private bool _bumped;
 
-    private Vector2[] _directions = { Vector2.left, Vector2.up, Vector2.right, Vector2.down };
+    private readonly Vector2[] _directions = { Vector2.left, Vector2.up, Vector2.right, Vector2.down };
     public EnemyWalkState(EntityStateManager entity)
     {
         enemy = (EnemyStateManager)entity;
@@ -59,16 +58,17 @@ public class EnemyWalkState : BaseState
         }
 
         _movementTimer += Time.deltaTime;
-
         _bumped = false;
+
     }
 
     public override void FixedUpdate()
     {
+        if (_moveDuration == 0 || _bumped)
+            return;
+
         Vector2 position = enemy.Rigidbody2d.position;
-
         position += enemy.Direction * enemy.WalkSpeed * Time.deltaTime;
-
         enemy.Rigidbody2d.MovePosition(position);
     }
 
@@ -81,6 +81,11 @@ public class EnemyWalkState : BaseState
     public override void OnCollisionEnter2D(Collision2D collision)
     {
         _bumped = true;
+    }
+
+    public override void OnCollisionExit2D(Collision2D collision)
+    {
+        _bumped = false;
     }
 
 }
