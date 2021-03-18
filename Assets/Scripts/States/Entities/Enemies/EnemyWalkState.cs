@@ -37,7 +37,7 @@ public class EnemyWalkState : BaseState
             if (nextDir == enemy.Direction) return;
 
             enemy.Direction = nextDir;
-            UpdateAnimation();
+            //UpdateAnimation();
 
         }
         else if (_movementTimer > _moveDuration)
@@ -53,7 +53,7 @@ public class EnemyWalkState : BaseState
             {
                 _moveDuration = Random.Range(1, 3);
                 enemy.Direction = _directions[Random.Range(0, _directions.Length)];
-                UpdateAnimation();
+                //UpdateAnimation();
             }
         }
 
@@ -66,6 +66,8 @@ public class EnemyWalkState : BaseState
     {
         if (_moveDuration == 0 || _bumped)
             return;
+
+        UpdateAnimation();
 
         Vector2 position = enemy.Rigidbody2d.position;
         position += enemy.Direction * enemy.WalkSpeed * Time.deltaTime;
