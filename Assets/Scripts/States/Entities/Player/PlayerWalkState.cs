@@ -1,23 +1,21 @@
 ﻿using UnityEngine;
 
-public class PlayerWalkState : BaseState
+public class PlayerWalkState : PlayerBaseState
 {
-    //private Vector2 movement;
-    
-    private PlayerStateManager _player;
-
-    public PlayerWalkState(EntityStateManager player)
-    {
-        _player = (PlayerStateManager)player;
-    }
+    public PlayerWalkState(EntityStateManager entity) : base(entity) { }
 
     public override void EnterState()
     {
-        _player.Animator.SetBool("IsWalking", true);
+        player.Animator.SetBool("IsWalking", true);
     }
 
     public override void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            player.TransitionToState(player.SwingSwordState);
+        }
+
         float horizontalMovement = Input.GetAxisRaw("Horizontal");
         float verticalMovement = Input.GetAxisRaw("Vertical");
 
@@ -35,23 +33,19 @@ public class PlayerWalkState : BaseState
         // Update the Animator only when motion
         if (movement != Vector2.zero)
         {
-            _player.Direction = movement;
-            _player.Animator.SetFloat("MoveX", horizontalMovement);
-            _player.Animator.SetFloat("MoveY", verticalMovement);
+            player.Direction = movement;
+            player.Animator.SetFloat("MoveX", horizontalMovement);
+            player.Animator.SetFloat("MoveY", verticalMovement);
         }
         else
         {
             // No motion, transition to Idle keeping the previous animation
-            _player.TransitionToState(_player.IdleState);
+            player.TransitionToState(player.IdleState);
         }
     }
 
     public override void FixedUpdate()
     {
-        Vector2 position = _player.Rigidbody2d.position;
-        position += _player.WalkSpeed * _player.Direction * Time.fixedDeltaTime;
-
-        _player.Rigidbody2d.MovePosition(position);
-
+        player.KinematicController.MovePosition(player.Direction, player.WalkSpeed);
     }
 }

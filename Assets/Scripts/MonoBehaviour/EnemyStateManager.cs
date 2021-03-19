@@ -13,6 +13,7 @@ public class EnemyStateManager : EntityStateManager
     public EnemyKnockedState KnockState { get => _knockedState; }
     public Vector2 HitDirection { get => _hitDir; }
     public float ThrustForce = 13.0f;
+    public bool isHit = false;
 
     private void Awake()
     {
@@ -21,7 +22,6 @@ public class EnemyStateManager : EntityStateManager
         _knockedState = new EnemyKnockedState(this);
 
         _direction = Vector2.down;
-        _hitDir = Vector2.zero;
         
     }
     protected override void Start()
@@ -32,8 +32,18 @@ public class EnemyStateManager : EntityStateManager
 
     protected override void Update()
     {
-        _currentState.ProcessAI();
         base.Update();
+    }
+
+    protected override void FixedUpdate()
+    {
+        if (isHit)
+        {
+            isHit = false;
+            TransitionToState(KnockState);
+            return;
+        }
+        base.FixedUpdate();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -43,7 +53,7 @@ public class EnemyStateManager : EntityStateManager
         {
             // Store the diretion the player hit us
             _hitDir = collision.gameObject.GetComponentInParent<PlayerStateManager>().Direction;
-            TransitionToState(KnockState);
+            isHit = true;
         }
     }
 }

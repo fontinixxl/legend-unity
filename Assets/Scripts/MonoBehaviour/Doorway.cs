@@ -26,7 +26,7 @@ public class Doorway : MonoBehaviour
 
     private SpriteRenderer spriteRenderer;
 
-    public static event Action<Doorway> PlayerCollideDoorway;
+    public static event Action<Doorway> ShiftRoomEvent;
 
     private void Awake()
     {
@@ -70,7 +70,7 @@ public class Doorway : MonoBehaviour
         if (collision.CompareTag("Player") && IsOpen)
         {
             // Shift player to the center of door to avoid phasing through wall
-            PlayerCollideDoorway?.Invoke(this);
+            ShiftRoomEvent?.Invoke(this);
         }
     }
 }

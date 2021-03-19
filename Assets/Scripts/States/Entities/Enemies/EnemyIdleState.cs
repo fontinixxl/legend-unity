@@ -1,24 +1,17 @@
 ﻿using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class EnemyIdleState : BaseState
+public class EnemyIdleState : EnemyBaseState
 {
-    private readonly EnemyStateManager _enemy;
-    
     // used for AI waiting
     private float _waitDuration;
     private float _waitTimer;
 
-    public EnemyIdleState(EnemyStateManager entity)
-    {
-        _enemy = entity;
-    }
+    public EnemyIdleState(EnemyStateManager entity) : base(entity) { }
 
     public override void EnterState()
     {
-        //Debug.Log("Ghost: Entering Idle state");
-
-        _enemy.Animator.SetBool("IsWalking", false);
+        enemy.Animator.SetBool("IsWalking", false);
         _waitDuration = _waitTimer = 0;
     }
 
@@ -34,8 +27,7 @@ public class EnemyIdleState : BaseState
             _waitTimer += Time.deltaTime;
             if (_waitTimer > _waitDuration)
             {
-                _enemy.TransitionToState(_enemy.WalkState);
-
+                enemy.TransitionToState(enemy.WalkState);
             }
         }
     }

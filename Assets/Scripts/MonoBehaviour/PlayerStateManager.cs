@@ -23,20 +23,12 @@ public class PlayerStateManager : EntityStateManager
     protected override void Start()
     {
         base.Start();
+        Doorway.ShiftRoomEvent += OnShiftRoom;
         TransitionToState(IdleState);
     }
 
-    protected override void Update()
+    private void OnShiftRoom(Doorway door)
     {
-        // TODO: consider using events for the shifting
-        if (_currentState != ShiftState && DungeonManager.Instance.Shifting)
-        {
-            TransitionToState(ShiftState);
-        }
-        else if (_currentState != SwingSwordState && Input.GetKeyDown(KeyCode.Space)){
-            TransitionToState(SwingSwordState);
-        }
-
-        base.Update();
+        TransitionToState(ShiftState);
     }
 }

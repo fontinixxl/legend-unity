@@ -12,9 +12,10 @@ GameObject:
   - component: {fileID: 8390546505969251319}
   - component: {fileID: 8390546505969251316}
   - component: {fileID: -945513684769804011}
-  - component: {fileID: -3953194347133265333}
+  - component: {fileID: 6947747669899590955}
   - component: {fileID: 4574092158041227019}
-  m_Layer: 8
+  - component: {fileID: 8383850655957429035}
+  m_Layer: 12
   m_Name: NPC Ghost
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -85,7 +86,7 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
-  m_SpriteSortPoint: 0
+  m_SpriteSortPoint: 1
 --- !u!95 &8390546505969251316
 Animator:
   serializedVersion: 3
@@ -113,7 +114,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8390546505969251317}
-  m_BodyType: 0
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 1
   m_UseAutoMass: 0
@@ -126,8 +127,8 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!61 &-3953194347133265333
-BoxCollider2D:
+--- !u!70 &6947747669899590955
+CapsuleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -139,19 +140,9 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.002562344, y: -0.12897277}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
-    newSize: {x: 1, y: 1}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 0.6156428, y: 0.74546957}
-  m_EdgeRadius: 0
+  m_Offset: {x: -0.0019169152, y: -0.099680066}
+  m_Size: {x: 0.55143934, y: 0.80063987}
+  m_Direction: 0
 --- !u!114 &4574092158041227019
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -165,3 +156,34 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   walkSpeed: 3
+  ThrustForce: 13
+  isHit: 1
+--- !u!114 &8383850655957429035
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8390546505969251317}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a624c9e2553bd3c40a16854c0be54567, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ContactOffset: 0.05
+  m_MaxIterations: 2
+  m_MovementFilter:
+    useTriggers: 0
+    useLayerMask: 0
+    useDepth: 0
+    useOutsideDepth: 0
+    useNormalAngle: 0
+    useOutsideNormalAngle: 0
+    layerMask:
+      serializedVersion: 2
+      m_Bits: 3073
+    minDepth: 0
+    maxDepth: 0
+    minNormalAngle: 0
+    maxNormalAngle: 0
+  m_Movement: {x: 0, y: 0}

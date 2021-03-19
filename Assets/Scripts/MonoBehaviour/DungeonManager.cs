@@ -37,7 +37,7 @@ public class DungeonManager : Singleton<DungeonManager>
     {
         DontDestroyOnLoad(gameObject);
 
-        Doorway.PlayerCollideDoorway += PlayerCollideDoorwayEventHandler;
+        Doorway.ShiftRoomEvent += PlayerCollideDoorwayEventHandler;
         Switch.SwitchPressed += SwitchPressedEventHandler;
 
         _currentRoom = RoomManager.GenerateRoom(_offsetX, _offsetY);

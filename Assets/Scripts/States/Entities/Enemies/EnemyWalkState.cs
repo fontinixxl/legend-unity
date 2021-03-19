@@ -1,24 +1,18 @@
 ﻿using UnityEngine;
 
-public class EnemyWalkState : BaseState
+public class EnemyWalkState : EnemyBaseState
 {
-    private readonly EnemyStateManager enemy;
-
     private float _moveDuration;
     private float _movementTimer;
     // keeps track of whether we just hit a wall
     private bool _bumped;
 
     private readonly Vector2[] _directions = { Vector2.left, Vector2.up, Vector2.right, Vector2.down };
-    public EnemyWalkState(EntityStateManager entity)
-    {
-        enemy = (EnemyStateManager)entity;
-    }
+
+    public EnemyWalkState(EnemyStateManager entity) : base(entity) { }
 
     public override void EnterState()
     {
-        //Debug.Log("Ghost: Entering Walking state");
-
         enemy.Animator.SetBool("IsWalking", true);
         _moveDuration = 0;
         _movementTimer = 0;
@@ -27,7 +21,6 @@ public class EnemyWalkState : BaseState
 
     public override void Update()
     {
-        //Debug.Log("Update");
         if (_moveDuration == 0 || _bumped)
         {
             // Set an initial move duration and direction
@@ -37,7 +30,6 @@ public class EnemyWalkState : BaseState
             if (nextDir == enemy.Direction) return;
 
             enemy.Direction = nextDir;
-            //UpdateAnimation();
 
         }
         else if (_movementTimer > _moveDuration)
@@ -53,7 +45,6 @@ public class EnemyWalkState : BaseState
             {
                 _moveDuration = Random.Range(1, 3);
                 enemy.Direction = _directions[Random.Range(0, _directions.Length)];
-                //UpdateAnimation();
             }
         }
 
@@ -64,14 +55,8 @@ public class EnemyWalkState : BaseState
 
     public override void FixedUpdate()
     {
-        if (_moveDuration == 0 || _bumped)
-            return;
-
         UpdateAnimation();
-
-        Vector2 position = enemy.Rigidbody2d.position;
-        position += enemy.Direction * enemy.WalkSpeed * Time.deltaTime;
-        enemy.Rigidbody2d.MovePosition(position);
+        _bumped = enemy.KinematicController.MovePosition(enemy.Direction, enemy.WalkSpeed );
     }
 
     private void UpdateAnimation()
@@ -79,15 +64,4 @@ public class EnemyWalkState : BaseState
         enemy.Animator.SetFloat("MoveX", enemy.Direction.x);
         enemy.Animator.SetFloat("MoveY", enemy.Direction.y);
     }
-
-    public override void OnCollisionEnter2D(Collision2D collision)
-    {
-        _bumped = true;
-    }
-
-    public override void OnCollisionExit2D(Collision2D collision)
-    {
-        _bumped = false;
-    }
-
 }

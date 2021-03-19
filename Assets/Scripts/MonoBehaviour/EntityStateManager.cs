@@ -1,19 +1,22 @@
 ﻿using UnityEngine;
+
 public abstract class EntityStateManager : MonoBehaviour
 {
     // Physics
     protected Rigidbody2D _rigidbody2d;
     protected Collider2D _collider;
+    protected KinematicTopDownController _kinematicController;
     [HideInInspector] public Rigidbody2D Rigidbody2d { get { return _rigidbody2d; } }
     [HideInInspector] public Collider2D Collider { get { return _collider; } }
+    [HideInInspector] public KinematicTopDownController KinematicController { get => _kinematicController; }
 
     // Animator
     protected Animator _animator;
     [HideInInspector] public Animator Animator { get { return _animator; } }
 
     // States
-    protected BaseState _currentState;
-    public BaseState CurrentState { get { return _currentState; } }
+    protected IState _currentState;
+    public IState CurrentState { get { return _currentState; } }
 
     // Others
     [SerializeField]
@@ -27,6 +30,7 @@ public abstract class EntityStateManager : MonoBehaviour
         _rigidbody2d = GetComponent<Rigidbody2D>();
         _collider = GetComponent<Collider2D>();
         _animator = GetComponent<Animator>();
+        _kinematicController = GetComponent<KinematicTopDownController>();
     }
 
     protected virtual void Update()
@@ -39,7 +43,7 @@ public abstract class EntityStateManager : MonoBehaviour
         _currentState.FixedUpdate();
     }
 
-    public void TransitionToState(BaseState state)
+    public void TransitionToState(IState state)
     {
         _currentState = state;
         _currentState.EnterState();
