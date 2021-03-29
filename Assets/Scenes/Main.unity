@@ -332,7 +332,9 @@ MonoBehaviour:
   switchPrefab: {fileID: 8025449822072144588, guid: dc0814afbf44cf643ae4577b3bdaa2e0,
     type: 3}
   enemyPrefabs:
-  - {fileID: 8390546505969251317, guid: 239543ea271e4684db165c0983ca8a96, type: 3}
+  - {fileID: 2433225451650072507, guid: d9939ff0266a50146b772acd42e40f68, type: 3}
+  - {fileID: 3934735097026660753, guid: c85f4a2bd7b91734ea458be76876cf9d, type: 3}
+  - {fileID: 8605540351659880773, guid: 7024e83f7c695704ca612a415b1fed21, type: 3}
 --- !u!4 &656800737
 Transform:
   m_ObjectHideFlags: 0
@@ -379,6 +381,9 @@ MonoBehaviour:
   playerPrefab: {fileID: 5828633382976372668, guid: 589728e378a653745937697366b7850a,
     type: 3}
   RoomManager: {fileID: 656800736}
+  miniMap: {fileID: 1625654598}
+  mapRoom: {fileID: 3363262221362943382, guid: 56492d6caf6c73e4dadc110b4605865e, type: 3}
+  startRoom: 35
 --- !u!4 &1481335976
 Transform:
   m_ObjectHideFlags: 0
@@ -392,4 +397,34 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1625654598
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1625654600}
+  m_Layer: 0
+  m_Name: MiniMap
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &1625654600
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1625654598}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

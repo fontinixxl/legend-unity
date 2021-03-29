@@ -182,7 +182,7 @@ MonoBehaviour:
     type: 3}
   spriteDoorClosed: {fileID: 6131800026451357487, guid: 0688132fe7e7d124987dc6f41f17795a,
     type: 3}
-  Direction: 3
+  position: 3
   _open: 0
 --- !u!61 &5010745468360822878
 BoxCollider2D:

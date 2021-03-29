@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Enemy
   - Weapon
+  - Switch
+  - PlayerHurtBox
   layers:
   - Default
   - TransparentFX
@@ -20,7 +22,7 @@ TagManager:
   - Weapon
   - Player
   - NPC
-  - 
+  - Player HurtBox
   - 
   - 
   - 
@@ -54,4 +56,7 @@ TagManager:
     locked: 0
   - name: entities
     uniqueID: 2512966301
+    locked: 0
+  - name: Map
+    uniqueID: 3879414909
     locked: 0
